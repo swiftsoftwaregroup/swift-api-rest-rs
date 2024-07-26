@@ -5,8 +5,9 @@ echo 'Sourcing $HOME/.cargo/env ...'
 source $HOME/.cargo/env
 
 echo 'Installing tools ...'
-cargo install cargo-watch
 cargo install diesel_cli --no-default-features --features sqlite
+cargo install cargo-watch
+cargo install cargo-tarpaulin
 
 
 # dev environment

@@ -13,10 +13,9 @@ Cargo.lock
 # MSVC Windows builds of rustc generate these, which store debugging information
 *.pdb
 
+# dev files
 .env
 books.db
 
-# Added by cargo
-
-/target
-
+# coverage reports
+coverage/

@@ -53,8 +53,22 @@ code .
 
 ### Test
 
+Run tests:
+
 ```bash
 cargo test
+```
+
+Generate test coverage report:
+
+```bash
+./coverage.sh
+
+# or
+cargo tarpaulin --skip-clean --ignore-tests --out Html --output-dir coverage
+
+# open coverage report
+open coverage/tarpaulin-report.html
 ```
 
 ### Build
