@@ -117,9 +117,14 @@ cargo add utoipa-swagger-ui --features actix-web
 cargo add diesel_migrations
 ```
 
-Install Diesel CLI:
+Install tools :
 
 ```bash
+# Diesel CLI
 cargo install diesel_cli --no-default-features --features sqlite
+# Watch
+cargo install cargo-watch
+# Test Coverage
+cargo install cargo-tarpaulin
 ```
 
