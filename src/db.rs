@@ -11,29 +11,29 @@ pub fn establish_connection() -> DbPool {
     dotenv().ok();
     let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
     let manager = ConnectionManager::<SqliteConnection>::new(database_url);
-    r2d2::Pool::builder()
-        .build(manager)
-        .expect("Failed to create pool")
+    
+    r2d2::Pool::builder().build(manager).expect("Failed to create pool")
 }
 
 pub fn create_book(pool: &DbPool, new_book: NewBook) -> QueryResult<Book> {
     use crate::schema::books::dsl::*;
     let conn = &mut pool.get().unwrap();
-    diesel::insert_into(books)
-        .values(&new_book)
-        .execute(conn)?;
+    diesel::insert_into(books).values(&new_book).execute(conn)?;
+    
     books.order(id.desc()).first(conn)
 }
 
 pub fn get_all_books(pool: &DbPool) -> QueryResult<Vec<Book>> {
     use crate::schema::books::dsl::*;
     let conn = &mut pool.get().unwrap();
+    
     books.load::<Book>(conn)
 }
 
 pub fn get_book(pool: &DbPool, book_id: i32) -> QueryResult<Book> {
     use crate::schema::books::dsl::*;
     let conn = &mut pool.get().unwrap();
+    
     books.filter(id.eq(Some(book_id))).first(conn)
 }
 
@@ -48,6 +48,7 @@ pub fn update_book(pool: &DbPool, book_id: i32, updated_book: NewBook) -> QueryR
             cover_image.eq(updated_book.cover_image),
         ))
         .execute(conn)?;
+    
     books.filter(id.eq(Some(book_id))).first(conn)
 }
 
