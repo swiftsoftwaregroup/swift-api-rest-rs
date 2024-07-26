@@ -1,28 +1,33 @@
 # swift-api-rest-rs
-REST Web API using Rust and Actix Web
+This project implements a simple API just to illustrate how one would go about implementing a REST API using [Actix Web](https://actix.rs/) and [Rust](https://www.rust-lang.org/). 
 
-# cli-rust
+## Setup
 
-Template for Command Line Interface (CLI) tool in Rust
+* [Setup for macOS](./docs/setup-macos.md)
 
-## Development
-
-### Setup for macOS
-
-Install `rustup`:
+## Run
 
 ```bash
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+source configure.sh
+
+cargo run
+
+# or
+cargo watch -x check -x run
+
+# or
+./watch.sh
 ```
 
-Test:
+Browse the docs and test the API via the Swagger UI:
 
 ```bash
-source $HOME/.cargo/env
-rustc --help
+open http://localhost:8001/docs
 ```
 
-### Work on macOS
+![swagger-ui](./docs/swagger-ui.png)
+
+## Updating the code
 
 Configure project:
 
@@ -36,13 +41,23 @@ Open the project in Visual Studio Code:
 code .
 ```
 
+## Development
+
+### Build
+
+```bash
+cargo build
+```
+
+### Database Management
+
 Setup DB migrations:
 
 ```bash
 diesel setup
 ```
 
-Gneerate DB migration:
+Generate a new DB migration:
 
 ```bash
 diesel migration generate create_books
@@ -52,18 +67,6 @@ Apply DB migrations:
 
 ```bash
 diesel migration run
-```
-
-### Run
-
-```bash
-cargo run
-```
-
-### Build
-
-```bash
-cargo build
 ```
 
 ## How to create a new project
@@ -79,6 +82,9 @@ cargo add diesel --features sqlite,r2d2
 cargo add serde --features derive
 cargo add serde_json
 cargo add chrono --features serde
+
+cargo add utoipa --features actix_extras
+cargo add utoipa-swagger-ui --features actix-web
 ```
 
 Install Diesel CLI:
