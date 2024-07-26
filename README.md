@@ -51,6 +51,12 @@ code .
 
 ## Development
 
+### Test
+
+```bash
+cargo test
+```
+
 ### Build
 
 ```bash
@@ -93,6 +99,8 @@ cargo add chrono --features serde
 
 cargo add utoipa --features actix_extras
 cargo add utoipa-swagger-ui --features actix-web
+
+cargo add diesel_migrations
 ```
 
 Install Diesel CLI:
