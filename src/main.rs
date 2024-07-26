@@ -1,12 +1,14 @@
-use actix_web::{web, App, HttpResponse, HttpServer, Responder};
-use utoipa::OpenApi;
-use utoipa_swagger_ui::SwaggerUi;
-
 mod db;
 mod models;
 mod schema;
 
 use models::{Book, NewBook};
+
+use actix_web::{web, App, HttpResponse, HttpServer, Responder};
+use actix_web::http::header::ContentType;
+
+use utoipa::OpenApi;
+use utoipa_swagger_ui::SwaggerUi;
 
 #[utoipa::path(
     post,
@@ -103,6 +105,34 @@ async fn delete_book(pool: web::Data<db::DbPool>, book_id: web::Path<i32>) -> im
     }
 }
 
+async fn redoc() -> HttpResponse {
+    let html = r#"
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Book Management API</title>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,700|Roboto:300,400,700" rel="stylesheet">
+        <style>
+            body {
+                margin: 0;
+                padding: 0;
+            }
+        </style>
+    </head>
+    <body>
+        <redoc spec-url='/openapi.json'></redoc>
+        <script src="https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js"> </script>
+    </body>
+    </html>
+    "#;
+
+    HttpResponse::Ok()
+        .content_type(ContentType::html())
+        .body(html)
+}
+
 #[derive(OpenApi)]
 #[openapi(
     paths(
@@ -137,6 +167,7 @@ async fn main() -> std::io::Result<()> {
             .service(
                 SwaggerUi::new("/docs/{_:.*}").url("/openapi.json", ApiDocs::openapi()),
             )
+            .route("/redoc", web::get().to(redoc))
             .route("/books", web::post().to(create_book))
             .route("/books", web::get().to(get_all_books))
             .route("/books/{id}", web::get().to(get_book))
