@@ -53,17 +53,15 @@ code .
 
 ### Code Formatting & Linting
 
-Run `fmt` formatter:
+Run `rustfmt` formatter:
 
 ```bash
-# check 
+# check
 cargo fmt --all -- --check
 
 # fix
 cargo fmt --all
 ```
-
-
 
 Run `clippy` linter:
 
