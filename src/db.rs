@@ -23,21 +23,21 @@ pub fn create_book(pool: &DbPool, new_book: NewBook) -> QueryResult<Book> {
     use crate::schema::books::dsl::*;
     let conn = &mut pool.get().unwrap();
     diesel::insert_into(books).values(&new_book).execute(conn)?;
-    
+
     books.order(id.desc()).first(conn)
 }
 
 pub fn get_all_books(pool: &DbPool) -> QueryResult<Vec<Book>> {
     use crate::schema::books::dsl::*;
     let conn = &mut pool.get().unwrap();
-    
+
     books.load::<Book>(conn)
 }
 
 pub fn get_book(pool: &DbPool, book_id: i32) -> QueryResult<Book> {
     use crate::schema::books::dsl::*;
     let conn = &mut pool.get().unwrap();
-    
+
     books.filter(id.eq(Some(book_id))).first(conn)
 }
 
@@ -52,7 +52,7 @@ pub fn update_book(pool: &DbPool, book_id: i32, updated_book: NewBook) -> QueryR
             cover_image.eq(updated_book.cover_image),
         ))
         .execute(conn)?;
-    
+
     books.filter(id.eq(Some(book_id))).first(conn)
 }
 

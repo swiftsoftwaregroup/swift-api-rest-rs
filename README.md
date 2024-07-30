@@ -51,6 +51,30 @@ code .
 
 ## Development
 
+### Code Formatting & Linting
+
+Run `fmt` formatter:
+
+```bash
+# check 
+cargo fmt --all -- --check
+
+# fix
+cargo fmt --all
+```
+
+
+
+Run `clippy` linter:
+
+```bash
+# check
+cargo clippy -- --deny warnings
+
+# fix
+cargo clippy --fix
+```
+
 ### Test
 
 Run tests:

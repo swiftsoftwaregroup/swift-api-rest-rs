@@ -7,8 +7,8 @@ mod schema;
 
 use models::{Book, NewBook};
 
-use actix_web::{web, App, HttpResponse, HttpServer, Responder};
 use actix_web::http::header::ContentType;
+use actix_web::{web, App, HttpResponse, HttpServer, Responder};
 
 use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
@@ -159,7 +159,7 @@ async fn redoc() -> HttpResponse {
         title = "Book Management API",
         version = "1.0.0",
         description = "A simple API for managing books"
-    )    
+    )
 )]
 struct ApiDocs;
 
@@ -177,9 +177,7 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .app_data(web::Data::new(pool.clone()))
             .service(web::redirect("/docs", "/docs/"))
-            .service(
-                SwaggerUi::new("/docs/{_:.*}").url("/openapi.json", ApiDocs::openapi()),
-            )
+            .service(SwaggerUi::new("/docs/{_:.*}").url("/openapi.json", ApiDocs::openapi()))
             .route("/redoc", web::get().to(redoc))
             .route("/books", web::post().to(create_book))
             .route("/books", web::get().to(get_all_books))

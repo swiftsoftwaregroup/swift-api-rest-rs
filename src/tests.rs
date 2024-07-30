@@ -6,7 +6,7 @@ use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
 
 use serde_json::json;
 
-use crate::{db, models, create_book, get_all_books, get_book, update_book, delete_book};
+use crate::{create_book, db, delete_book, get_all_books, get_book, models, update_book};
 
 pub const MIGRATIONS: EmbeddedMigrations = embed_migrations!("migrations");
 
@@ -18,7 +18,8 @@ fn setup_test_db() -> db::DbPool {
 
     // Run migrations
     let conn = &mut pool.get().expect("Failed to get connection");
-    conn.run_pending_migrations(MIGRATIONS).expect("Failed to run migrations");
+    conn.run_pending_migrations(MIGRATIONS)
+        .expect("Failed to run migrations");
 
     pool
 }
@@ -29,8 +30,9 @@ async fn test_create_book() {
     let app = test::init_service(
         App::new()
             .app_data(web::Data::new(pool.clone()))
-            .route("/books", web::post().to(create_book))
-    ).await;
+            .route("/books", web::post().to(create_book)),
+    )
+    .await;
 
     let req = test::TestRequest::post()
         .uri("/books")
@@ -41,7 +43,7 @@ async fn test_create_book() {
             "cover_image": "http://example.com/cover.jpg"
         }))
         .to_request();
-    
+
     let resp = test::call_service(&app, req).await;
     assert!(resp.status().is_success());
 }
@@ -52,8 +54,9 @@ async fn test_get_all_books() {
     let app = test::init_service(
         App::new()
             .app_data(web::Data::new(pool.clone()))
-            .route("/books", web::get().to(get_all_books))
-    ).await;
+            .route("/books", web::get().to(get_all_books)),
+    )
+    .await;
 
     let req = test::TestRequest::get().uri("/books").to_request();
     let resp = test::call_service(&app, req).await;
@@ -67,8 +70,9 @@ async fn test_get_book() {
         App::new()
             .app_data(web::Data::new(pool.clone()))
             .route("/books", web::post().to(create_book))
-            .route("/books/{id}", web::get().to(get_book))
-    ).await;
+            .route("/books/{id}", web::get().to(get_book)),
+    )
+    .await;
 
     // First, create a book
     let create_req = test::TestRequest::post()
@@ -82,7 +86,7 @@ async fn test_get_book() {
         .to_request();
 
     let create_resp: models::Book = test::call_and_read_body_json(&app, create_req).await;
-    
+
     // Then, get the created book
     let get_req = test::TestRequest::get()
         .uri(&format!("/books/{}", create_resp.id.unwrap()))
@@ -99,8 +103,9 @@ async fn test_update_book() {
         App::new()
             .app_data(web::Data::new(pool.clone()))
             .route("/books", web::post().to(create_book))
-            .route("/books/{id}", web::put().to(update_book))
-    ).await;
+            .route("/books/{id}", web::put().to(update_book)),
+    )
+    .await;
 
     // First, create a book
     let create_req = test::TestRequest::post()
@@ -114,7 +119,7 @@ async fn test_update_book() {
         .to_request();
 
     let create_resp: models::Book = test::call_and_read_body_json(&app, create_req).await;
-    
+
     // Then, update the created book
     let update_req = test::TestRequest::put()
         .uri(&format!("/books/{}", create_resp.id.unwrap()))
@@ -137,8 +142,9 @@ async fn test_delete_book() {
         App::new()
             .app_data(web::Data::new(pool.clone()))
             .route("/books", web::post().to(create_book))
-            .route("/books/{id}", web::delete().to(delete_book))
-    ).await;
+            .route("/books/{id}", web::delete().to(delete_book)),
+    )
+    .await;
 
     // First, create a book
     let create_req = test::TestRequest::post()
@@ -150,14 +156,14 @@ async fn test_delete_book() {
             "cover_image": "http://example.com/cover.jpg"
         }))
         .to_request();
- 
+
     let create_resp: models::Book = test::call_and_read_body_json(&app, create_req).await;
-    
+
     // Then, delete the created book
     let delete_req = test::TestRequest::delete()
         .uri(&format!("/books/{}", create_resp.id.unwrap()))
         .to_request();
-    
+
     let resp = test::call_service(&app, delete_req).await;
     assert_eq!(resp.status(), actix_web::http::StatusCode::NO_CONTENT);
 }
