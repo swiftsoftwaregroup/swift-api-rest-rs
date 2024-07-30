@@ -1,7 +1,6 @@
 use diesel::prelude::*;
 use diesel::r2d2::{self, ConnectionManager};
 use dotenv::dotenv;
-use std::env;
 
 use crate::models::{Book, NewBook};
 
@@ -9,7 +8,7 @@ pub type DbPool = r2d2::Pool<ConnectionManager<SqliteConnection>>;
 
 pub fn establish_connection() -> DbPool {
     dotenv().ok();
-    let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
+    let database_url = std::env::var("DATABASE_URL").unwrap_or_else(|_| ":memory:".to_string());
     create_connection_pool(&database_url)
 }
 

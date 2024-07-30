@@ -13,6 +13,10 @@ use actix_web::http::header::ContentType;
 use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
 
+use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
+
+pub const MIGRATIONS: EmbeddedMigrations = embed_migrations!("migrations");
+
 #[utoipa::path(
     post,
     path = "/books",
@@ -163,6 +167,12 @@ struct ApiDocs;
 async fn main() -> std::io::Result<()> {
     let pool = db::establish_connection();
 
+    // Run migrations
+    pool.get()
+        .expect("Failed to get DB connection")
+        .run_pending_migrations(MIGRATIONS)
+        .expect("Failed to run migrations");
+
     HttpServer::new(move || {
         App::new()
             .app_data(web::Data::new(pool.clone()))
@@ -177,7 +187,7 @@ async fn main() -> std::io::Result<()> {
             .route("/books/{id}", web::put().to(update_book))
             .route("/books/{id}", web::delete().to(delete_book))
     })
-    .bind("127.0.0.1:8001")?
+    .bind("0.0.0.0:8001")?
     .run()
     .await
 }
